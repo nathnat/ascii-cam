@@ -1,31 +1,39 @@
-import cv2 as cv
-capture = cv.VideoCapture(0)
-if not capture.isOpened():
-    print("Cannot open camera")
-    exit()
+import cv2
+
+# La liste des charactères du moins au plus plein
+ASCII_CHARS = '.,:;+*?%S#@'
+
+capture = cv2.VideoCapture(0)
 
 while True:
-    # Capture frame-by-frame
-    ret, frame = capture.read()
+    isTrue, image = capture.read()
 
-    print(frame.shape)
-
-    # print(capture.get(cv.CAP_PROP_FRAME_WIDTH), " ", capture.get(cv.CAP_PROP_FRAME_HEIGHT))
-
-    # if frame is read correctly ret is True
-    if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
+    # Si l'image est lu correctement
+    if not isTrue:
+        print("Pas d'accès à la webcam...")
         break
 
-    # Our operations on the frame come here
-    gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    # On redimensionne l'image grâce a un produit en croix
+    width = 120
+    height = int(width * image.shape[0] / image.shape[1])
+    dim = (width, height)
 
-    # Display the resulting frame
-    cv.imshow('frame', gray_frame)
+    image = cv2.resize(image, dim)
 
-    if cv.waitKey(1) == ord('q'):
-        break
+    # On rend l'image en noir et blanc
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# When everything done, release the capture
-capture.release()
-cv.destroyAllWindows()
+    # On transforme l'image en ASCII art
+    result = ""
+    i_save = 0
+    for i in range(gray.shape[0]):
+        for j in range(gray.shape[1]):
+
+            result += ASCII_CHARS[round(gray[i][j] / (255 / len(ASCII_CHARS))) - 1]
+
+            if (i_save != i):
+                i_save = i
+                result += "\n"
+
+    # On print le résultat
+    print(result)
