@@ -1,4 +1,4 @@
-### ASCII-cam
+# 🎥 [ASCII-cam](https://github.com/micodeyt/ascii-webcam)
 
 ## Description
 
